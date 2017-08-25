@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title>Havisha and the Gang's Meetup App</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'yelp_api_test/css/index.css' %}" media="screen" title="no title"  charset="utf-8">
+    </head>
+    <body>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+        {% endif %}
+           
+        {% load socialaccount %}
+        {% providers_media_js %}
+        <script>
+            
+            function getFriendList(){
+                FB.api('/me/friends', function(response){
+                    console.log(response);
+            }, {scope: 'user_friends'});
+            }
+
+            function checkstatus(){
+                FB.getLoginStatus(function(response) {
+                    if (response.status === 'connected') {
+                        top.location = "/home";
+                        var uid = response.authResponse.userID;
+                        var accessToken = response.authResponse.accessToken;
+                    } else if (response.status === 'not_authorized') {
+                        // alert(2);
+                    } else {
+                        // alert(3);
+                    }
+                });
+                setTimeout(function(){ checkstatus(); }, 3000);
+            };
+
+            
+            window.fbAsyncInit = function() {
+                FB.init({
+                appId      : '280699599004753',
+                xfbml      : true,
+                version    : 'v2.10'
+                });
+                
+                (function(d, s, id){
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) {return;}
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js";
+                    fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
+            
+
+                checkstatus();
+            };
+            
+            setTimeout(function(){ checkstatus(); }, 3000);
+
+        
+           
+        </script>
+        <fb:login-button 
+            id = "fb-btn"
+            scope="public_profile,email,user_friends" class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"
+            onlogin="checkstatus();">
+        </fb:login-button>
+
+        <!-- <div scope="public_profile,email,user_friends" class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div> -->
+    </body>
+</html>
